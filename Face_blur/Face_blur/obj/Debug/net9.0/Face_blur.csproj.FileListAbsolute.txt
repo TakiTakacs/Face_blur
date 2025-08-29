@@ -13,3 +13,7 @@
 /home/taki04/Programozás/Face_blur/Face_blur/Face_blur/obj/Debug/net9.0/Face_blur.pdb
 /home/taki04/Programozás/Face_blur/Face_blur/Face_blur/obj/Debug/net9.0/Face_blur.genruntimeconfig.cache
 /home/taki04/Programozás/Face_blur/Face_blur/Face_blur/obj/Debug/net9.0/ref/Face_blur.dll
+/home/taki04/Programozás/Face_blur/Face_blur/Face_blur/bin/Debug/net9.0/Emgu.CV.dll
+/home/taki04/Programozás/Face_blur/Face_blur/Face_blur/bin/Debug/net9.0/runtimes/ubuntu-x64/native/libcvextern.so
+/home/taki04/Programozás/Face_blur/Face_blur/Face_blur/obj/Debug/net9.0/Face_blur.csproj.AssemblyReference.cache
+/home/taki04/Programozás/Face_blur/Face_blur/Face_blur/obj/Debug/net9.0/Face_blur.csproj.Up2Date
