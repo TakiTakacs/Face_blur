@@ -1,0 +1,15 @@
+/home/taki04/Programozás/Face_blur/Face_blur/Face_blur/bin/Debug/net9.0/Face_blur
+/home/taki04/Programozás/Face_blur/Face_blur/Face_blur/bin/Debug/net9.0/Face_blur.deps.json
+/home/taki04/Programozás/Face_blur/Face_blur/Face_blur/bin/Debug/net9.0/Face_blur.runtimeconfig.json
+/home/taki04/Programozás/Face_blur/Face_blur/Face_blur/bin/Debug/net9.0/Face_blur.dll
+/home/taki04/Programozás/Face_blur/Face_blur/Face_blur/bin/Debug/net9.0/Face_blur.pdb
+/home/taki04/Programozás/Face_blur/Face_blur/Face_blur/obj/Debug/net9.0/Face_blur.GeneratedMSBuildEditorConfig.editorconfig
+/home/taki04/Programozás/Face_blur/Face_blur/Face_blur/obj/Debug/net9.0/Face_blur.AssemblyInfoInputs.cache
+/home/taki04/Programozás/Face_blur/Face_blur/Face_blur/obj/Debug/net9.0/Face_blur.AssemblyInfo.cs
+/home/taki04/Programozás/Face_blur/Face_blur/Face_blur/obj/Debug/net9.0/Face_blur.csproj.CoreCompileInputs.cache
+/home/taki04/Programozás/Face_blur/Face_blur/Face_blur/obj/Debug/net9.0/Face_blur.sourcelink.json
+/home/taki04/Programozás/Face_blur/Face_blur/Face_blur/obj/Debug/net9.0/Face_blur.dll
+/home/taki04/Programozás/Face_blur/Face_blur/Face_blur/obj/Debug/net9.0/refint/Face_blur.dll
+/home/taki04/Programozás/Face_blur/Face_blur/Face_blur/obj/Debug/net9.0/Face_blur.pdb
+/home/taki04/Programozás/Face_blur/Face_blur/Face_blur/obj/Debug/net9.0/Face_blur.genruntimeconfig.cache
+/home/taki04/Programozás/Face_blur/Face_blur/Face_blur/obj/Debug/net9.0/ref/Face_blur.dll
