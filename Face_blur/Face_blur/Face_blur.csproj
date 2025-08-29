@@ -9,10 +9,4 @@
         <UseRidGraph>true</UseRidGraph>
     </PropertyGroup>
 
-
-    <ItemGroup>
-      <PackageReference Include="Emgu.CV" Version="4.12.0.5763" />
-      <PackageReference Include="Emgu.CV.runtime.ubuntu-x64" Version="4.12.0.5763" />
-    </ItemGroup>
-
 </Project>
