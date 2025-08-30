@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Face_blur")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+951fce698de8273a88eb3b4cb64249519f69431b")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e754195de3ce5d827e99b3ca4aa5a526460d6857")]
 [assembly: System.Reflection.AssemblyProductAttribute("Face_blur")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Face_blur")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
