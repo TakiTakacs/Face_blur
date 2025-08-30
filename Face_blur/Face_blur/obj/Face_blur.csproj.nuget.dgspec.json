@@ -54,6 +54,10 @@
               "target": "Package",
               "version": "[4.12.0.5763, )"
             },
+            "Emgu.CV.Bitmap": {
+              "target": "Package",
+              "version": "[4.12.0.5763, )"
+            },
             "Emgu.CV.runtime.windows": {
               "target": "Package",
               "version": "[4.12.0.5763, )"
