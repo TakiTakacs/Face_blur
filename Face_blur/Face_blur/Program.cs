@@ -21,8 +21,10 @@ namespace Face_blur
         static void Main(string[] args)
         {
             
-            CascadeClassifier haarCascade;
-            haarCascade = new CascadeClassifier(@"haarcascade_frontalface_alt_tree.xml");
+            CascadeClassifier faceHaarCascade,face2HaarCascade;
+            faceHaarCascade = new CascadeClassifier(@"haarcascade_frontalface_default.xml");
+            face2HaarCascade = new CascadeClassifier(@"haarcascade_frontalface_alt.xml");
+
 
             //Image<Bgr, Byte> img = new Image<Bgr, byte>();
 
@@ -30,7 +32,7 @@ namespace Face_blur
 
             //asd.Save("output.jpg");
 
-            using (var capture = new VideoCapture(@"test1.mp4"))
+            using (var capture = new VideoCapture(@"test3.mp4"))
             {
                 int frameIndex = 0;
                 Mat frame = new Mat();
@@ -42,30 +44,43 @@ namespace Face_blur
 
                     if (!frame.IsEmpty)
                     {
+                        var frameImg = frame.ToImage<Bgr, byte>();
+
                         var gray = frame.ToImage<Gray,byte>();
 
-                        var grayBitmap = gray.ToBitmap();
+                        //var grayBitmap = gray.ToBitmap();
 
-                        Bitmap tempBitmap = new Bitmap(grayBitmap.Width,grayBitmap.Height);
+                        //Bitmap tempBitmap = new Bitmap(grayBitmap.Width,grayBitmap.Height);
 
-                        var jelenArcok = haarCascade.DetectMultiScale(gray);
+                        Rectangle[] jelenArcok = faceHaarCascade.DetectMultiScale(gray,1.2);
+                        Rectangle[] jelenSzemek = face2HaarCascade.DetectMultiScale(gray, 1.2);
+
+                        foreach (var item in jelenSzemek)
+                        {
+                            frameImg.Draw(item, new Bgr(255, 0, 0), 4);
+                        }
 
                         foreach ( var arc in jelenArcok)
                         {
-                            using (Graphics graphics = Graphics.FromImage(tempBitmap))
-                            {
-                                graphics.DrawImage(grayBitmap,0,0);
-                                using (Pen pen = new Pen(Color.Red, 1))
-                                {
-                                    graphics.DrawRectangle(pen, arc);
-                                }
-                            }
+
+                            frameImg.Draw(arc,new Bgr(0,0,255) ,4);
+
+                            
+
+                            //using (Graphics graphics = Graphics.FromImage(tempBitmap))
+                            //{
+                            //    graphics.DrawImage(grayBitmap,0,0);
+                            //    using (Pen pen = new Pen(Color.Red, 5))
+                            //    {
+                            //        graphics.DrawRectangle(pen, arc);
+                            //    }
+                            //}
                         }
-                        grayBitmap = tempBitmap;
+                        //grayBitmap = tempBitmap;
                         
 
-                        grayBitmap.Save(@$"C:\Users\peter\source\repos\Face_blur\Face_blur\Face_blur\bin\Debug\net9.0\Frames\frame_{frameIndex}.jpg");
-                        Console.WriteLine($"Saved");
+                        frameImg.Save(@$"C:\Users\peter\source\repos\Face_blur\Face_blur\Face_blur\bin\Debug\net9.0\Frames\frame_{frameIndex}.jpg");
+                        Console.WriteLine($"Saved frame: {frameIndex}");
                         frameIndex++;
                     }
                 }
@@ -73,17 +88,6 @@ namespace Face_blur
 
 
             }
-
-
-
-
-                
-
-
-
-        }
-
-      
-
+        }     
     }
 }
