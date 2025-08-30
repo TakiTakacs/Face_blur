@@ -65,3 +65,7 @@ C:\Users\peter\source\repos\Face_blur\Face_blur\Face_blur\obj\Debug\net9.0\refin
 C:\Users\peter\source\repos\Face_blur\Face_blur\Face_blur\obj\Debug\net9.0\Face_blur.pdb
 C:\Users\peter\source\repos\Face_blur\Face_blur\Face_blur\obj\Debug\net9.0\Face_blur.genruntimeconfig.cache
 C:\Users\peter\source\repos\Face_blur\Face_blur\Face_blur\obj\Debug\net9.0\ref\Face_blur.dll
+C:\Users\peter\source\repos\Face_blur\Face_blur\Face_blur\bin\Debug\net9.0\Microsoft.Win32.SystemEvents.dll
+C:\Users\peter\source\repos\Face_blur\Face_blur\Face_blur\bin\Debug\net9.0\System.Drawing.Common.dll
+C:\Users\peter\source\repos\Face_blur\Face_blur\Face_blur\bin\Debug\net9.0\System.Private.Windows.Core.dll
+C:\Users\peter\source\repos\Face_blur\Face_blur\Face_blur\bin\Debug\net9.0\runtimes\win\lib\net9.0\Microsoft.Win32.SystemEvents.dll

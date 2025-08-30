@@ -9,7 +9,8 @@
       "Face_blur/1.0.0": {
         "dependencies": {
           "Emgu.CV": "4.12.0.5763",
-          "Emgu.CV.runtime.windows": "4.12.0.5763"
+          "Emgu.CV.runtime.windows": "4.12.0.5763",
+          "System.Drawing.Common": "9.0.8"
         },
         "runtime": {
           "Face_blur.dll": {}
@@ -203,10 +204,41 @@
       },
       "Microsoft.NETCore.Platforms/1.1.1": {},
       "Microsoft.NETCore.Targets/1.1.3": {},
+      "Microsoft.Win32.SystemEvents/9.0.8": {
+        "runtime": {
+          "lib/net9.0/Microsoft.Win32.SystemEvents.dll": {
+            "assemblyVersion": "9.0.0.0",
+            "fileVersion": "9.0.825.36511"
+          }
+        },
+        "runtimeTargets": {
+          "runtimes/win/lib/net9.0/Microsoft.Win32.SystemEvents.dll": {
+            "rid": "win",
+            "assetType": "runtime",
+            "assemblyVersion": "9.0.0.0",
+            "fileVersion": "9.0.825.36511"
+          }
+        }
+      },
       "runtime.native.System/4.3.0": {
         "dependencies": {
           "Microsoft.NETCore.Platforms": "1.1.1",
           "Microsoft.NETCore.Targets": "1.1.3"
+        }
+      },
+      "System.Drawing.Common/9.0.8": {
+        "dependencies": {
+          "Microsoft.Win32.SystemEvents": "9.0.8"
+        },
+        "runtime": {
+          "lib/net9.0/System.Drawing.Common.dll": {
+            "assemblyVersion": "9.0.0.0",
+            "fileVersion": "9.0.825.36801"
+          },
+          "lib/net9.0/System.Private.Windows.Core.dll": {
+            "assemblyVersion": "9.0.0.0",
+            "fileVersion": "9.0.825.36801"
+          }
         }
       },
       "System.Drawing.Primitives/4.3.0": {
@@ -383,12 +415,26 @@
       "path": "microsoft.netcore.targets/1.1.3",
       "hashPath": "microsoft.netcore.targets.1.1.3.nupkg.sha512"
     },
+    "Microsoft.Win32.SystemEvents/9.0.8": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-64oQBN8I8EOcyHGNt6+rlcqm4tlcKfqOpswtBCJZnpzBQ15L6IFKqjnbjbOWBpG9wKq9A/aC2LFSmSqplbwTYA==",
+      "path": "microsoft.win32.systemevents/9.0.8",
+      "hashPath": "microsoft.win32.systemevents.9.0.8.nupkg.sha512"
+    },
     "runtime.native.System/4.3.0": {
       "type": "package",
       "serviceable": true,
       "sha512": "sha512-c/qWt2LieNZIj1jGnVNsE2Kl23Ya2aSTBuXMD6V7k9KWr6l16Tqdwq+hJScEpWER9753NWC8h96PaVNY5Ld7Jw==",
       "path": "runtime.native.system/4.3.0",
       "hashPath": "runtime.native.system.4.3.0.nupkg.sha512"
+    },
+    "System.Drawing.Common/9.0.8": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-ineIJmF+yuBEHGft9R153J9kmBFaeEfFL5Put5nzENneRcGGPUb3MvM8zrZ5pERQ0jPPSE3Wqw/clXvOq2F/Kw==",
+      "path": "system.drawing.common/9.0.8",
+      "hashPath": "system.drawing.common.9.0.8.nupkg.sha512"
     },
     "System.Drawing.Primitives/4.3.0": {
       "type": "package",
