@@ -16,6 +16,15 @@ namespace Face_blur
         static void Main(string[] args)
         {
 
+            string inputFilePath = @"test1.mp4";
+            string outputFilePath = "output.mp4";
+            if (args.Length == 2)
+            {
+                inputFilePath = args[0];
+                outputFilePath = args[1];
+            }
+
+
             var smallframe = new Mat();
             //haarcascade file-ok megadása felismeréshez
             
@@ -35,7 +44,8 @@ namespace Face_blur
             }
 
             //videó capture
-            using var capture = new VideoCapture(@"test3.mp4");
+            using var capture = new VideoCapture(inputFilePath);
+
             
 
             //Video exportáláshoz paraméterek
@@ -44,7 +54,7 @@ namespace Face_blur
             double fps = capture.Get(CapProp.Fps);
 
 
-            using var vw = new VideoWriter("output.mp4", backend_idx, VideoWriter.Fourcc('H', '2', '6', '4'), fps, new Size(width, height), true);
+            using var vw = new VideoWriter(outputFilePath, backend_idx, VideoWriter.Fourcc('H', '2', '6', '4'), fps, new Size(width, height), true);
                 
 
                 
