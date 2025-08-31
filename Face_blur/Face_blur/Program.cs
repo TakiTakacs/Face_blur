@@ -15,9 +15,10 @@ namespace Face_blur
 
         static void Main(string[] args)
         {
-
-            string inputFilePath = @"test4.mp4";
-            string outputFilePath = "output.mp4";
+            int progress = 0;
+            string inputFilePath = @"C:\Users\peter\Videos\test4.mp4";
+            string outputFilePath = @"C:\Users\peter\Videos\output.mp4";
+            Console.WriteLine($"Progress: {progress}%");
             if (args.Length == 2)
             {
                 inputFilePath = args[0];
@@ -28,8 +29,7 @@ namespace Face_blur
             var smallframe = new Mat();
             //haarcascade file-ok megadása felismeréshez
             
-            using var faceHaarCascade = new CascadeClassifier(@"haarcascade_frontalface_default.xml");
-            using var face2HaarCascade = new CascadeClassifier(@"haarcascade_frontalface_alt.xml");
+            using var faceHaarCascade = new CascadeClassifier(@"haarcascade_frontalface_alt.xml");
 
             //MSMF backend használata hogy ne kelljen külön ffmpegnek telepítve lennie
             Backend[] backends = CvInvoke.WriterBackends;
@@ -52,6 +52,7 @@ namespace Face_blur
             int width = (int)capture.Get(CapProp.FrameWidth);
             int height = (int)capture.Get(CapProp.FrameHeight);
             double fps = capture.Get(CapProp.Fps);
+            var frameCount = capture.Get(CapProp.FrameCount);
 
 
             using var vw = new VideoWriter(outputFilePath, backend_idx, VideoWriter.Fourcc('H', '2', '6', '4'), fps, new Size(width, height), true);
@@ -64,12 +65,12 @@ namespace Face_blur
 
 
                 //Pontatlanság okozta flicker elkerülése miatt, korábban maszkolt területek további maszkolása adott képkoca ideig
-                const int maxFramePersistence = 5; //Arc helyének takarása extra képkockákig
+                const int maxFramePersistence = 15; //Arc helyének takarása extra képkockákig
                 Dictionary<Rectangle, int> facePersistence = new Dictionary<Rectangle, int>();
                 
 
             //képkockák feldolgozása                
-            while (capture.Grab() && frameIndex<1000)
+            while (capture.Grab())
                 {
 
                     capture.Retrieve(frame);
@@ -83,7 +84,7 @@ namespace Face_blur
                        using var gray = frame.ToImage<Gray, byte>();
 
                         //arcok felismerése és bekeretezése
-                        Rectangle[] jelenArcok = face2HaarCascade.DetectMultiScale(gray, 1.1,4);
+                        Rectangle[] jelenArcok = faceHaarCascade.DetectMultiScale(gray, 1.1,6);
 
                         var currentFaces = new List<Rectangle>(jelenArcok);
                      
@@ -114,7 +115,7 @@ namespace Face_blur
                     foreach (var item in allFaces)
                     {
 
-                        int extraPixel = 40;
+                        int extraPixel = 20;
 
                         //maszkolás határainak ellenőrzése
                         int x = Math.Max(item.Left - extraPixel, 0);
@@ -141,8 +142,16 @@ namespace Face_blur
                     //képkocka file-ba írása
                     vw.Write(frameImg);
 
-                        //frameImg.Save(@$"C:\Users\peter\source\repos\Face_blur\Face_blur\Face_blur\bin\Debug\net9.0\Frames\frame_{frameIndex}.jpg");
-                        Console.WriteLine($"Saved frame: {frameIndex}");
+                    //progress nyomon követése
+                    var most = Convert.ToInt32(Math.Round((frameIndex + 1) / frameCount * 100));
+                    //frameImg.Save(@$"C:\Users\peter\source\repos\Face_blur\Face_blur\Face_blur\bin\Debug\net9.0\Frames\frame_{frameIndex}.jpg");
+                    if (progress < most)
+                    {
+                        progress = most;
+                        Console.Clear();
+                        Console.WriteLine($"Progress: {progress}%");
+                    }
+
                         frameIndex++;
                     }
 
