@@ -1,9 +1,5 @@
-﻿using Emgu.CV;
-using Emgu.CV.CvEnum;
-using Emgu.CV.Face;
-using Emgu.CV.Structure;
-using System.Drawing;
-using System.IO;
+﻿using OpenCvSharp;
+using OpenCvSharp.Dnn;
 
 
 
@@ -16,32 +12,24 @@ namespace Face_blur
         static void Main(string[] args)
         {
             int progress = 0;
-            string inputFilePath = @"C:\Users\peter\Videos\test4.mp4";
-            string outputFilePath = @"C:\Users\peter\Videos\output.mp4";
+            string inputFilePath = @"C:\Users\peter\Videos\test1.mp4";
+            string outputFilePath = @"C:\Users\peter\Videos\output2.mp4";
             Console.WriteLine($"Progress: {progress}%");
+
+            //argumentumok feldolgozása
             if (args.Length == 2)
             {
                 inputFilePath = args[0];
                 outputFilePath = args[1];
             }
 
+            //DNN model betöltése
+            using var net = CvDnn.ReadNetFromCaffe("deploy.prototxt", "dnn_model.caffemodel");
 
-            var smallframe = new Mat();
-            //haarcascade file-ok megadása felismeréshez
             
-            using var faceHaarCascade = new CascadeClassifier(@"haarcascade_frontalface_alt.xml");
 
-            //MSMF backend használata hogy ne kelljen külön ffmpegnek telepítve lennie
-            Backend[] backends = CvInvoke.WriterBackends;
-            int backend_idx = 0; //bármelyik backend
-            foreach (Backend be in backends)
-            {
-                if (be.Name.Equals("MSMF"))
-                {
-                    backend_idx = be.ID;
-                    break;
-                }
-            }
+            //net.SetPreferableBackend(Backend.OPENCV);
+            //net.SetPreferableTarget(Target.OPENCL);
 
             //videó capture
             using var capture = new VideoCapture(inputFilePath);
@@ -49,13 +37,13 @@ namespace Face_blur
             
 
             //Video exportáláshoz paraméterek
-            int width = (int)capture.Get(CapProp.FrameWidth);
-            int height = (int)capture.Get(CapProp.FrameHeight);
-            double fps = capture.Get(CapProp.Fps);
-            var frameCount = capture.Get(CapProp.FrameCount);
+            int width = capture.FrameWidth;
+            int height = capture.FrameHeight;
+            double fps = capture.Fps;
+            var frameCount = capture.FrameCount;
 
 
-            using var vw = new VideoWriter(outputFilePath, backend_idx, VideoWriter.Fourcc('H', '2', '6', '4'), fps, new Size(width, height), true);
+            using var vw = new VideoWriter(outputFilePath,VideoCaptureAPIs.MSMF, VideoWriter.FourCC('H', '2', '6', '4'), fps, new Size(width, height), true);
                 
 
                 
@@ -65,92 +53,85 @@ namespace Face_blur
 
 
                 //Pontatlanság okozta flicker elkerülése miatt, korábban maszkolt területek további maszkolása adott képkoca ideig
-                const int maxFramePersistence = 15; //Arc helyének takarása extra képkockákig
-                Dictionary<Rectangle, int> facePersistence = new Dictionary<Rectangle, int>();
+                //const int maxFramePersistence = 15; //Arc helyének takarása extra képkockákig
+                //Dictionary<Rectangle, int> facePersistence = new Dictionary<Rectangle, int>();
                 
 
             //képkockák feldolgozása                
-            while (capture.Grab())
+            while (capture.Grab() && frameIndex < 3000)
                 {
 
                     capture.Retrieve(frame);
 
-                    if (!frame.IsEmpty)
+                    if (!frame.Empty())
                     {
-                       //frame Image-é konvertálása
-                       using var frameImg = frame.ToImage<Bgr, byte>();
-                        
-                       //grayscale a felismeréshez
-                       using var gray = frame.ToImage<Gray, byte>();
+                       using var blob = CvDnn.BlobFromImage(frame,1.0,new Size(2160,3840),new Scalar(104.0,117.0,123.0),false,false);
 
-                        //arcok felismerése és bekeretezése
-                        Rectangle[] jelenArcok = faceHaarCascade.DetectMultiScale(gray, 1.1,6);
+                        net.SetInput(blob,"data");
 
-                        var currentFaces = new List<Rectangle>(jelenArcok);
-                     
-                        //korábbról mentett arcok hátralevő megjelenési idejének csökkentése, vagy lejártak törlése
-                        foreach (var face in facePersistence.Keys)
+                    using var detection = net.Forward("detection_out");
+                    using var detectionMat = Mat.FromPixelData(detection.Size(2),detection.Size(3),MatType.CV_32F,detection.Ptr(0));
+
+                    for (int i = 0; i < detectionMat.Rows; i++)
+                    {
+                        float confidence = detectionMat.At<float>(i, 2);
+                        if (confidence > 0.7)
                         {
-                            facePersistence[face]--;
-                            if (facePersistence[face] <= 0)
+                            int x1 = (int)(detectionMat.At<float>(i, 3) * width);
+                            int y1 = (int)(detectionMat.At<float>(i, 4) * height);
+
+                            int x2 = (int)(detectionMat.At<float>(i, 5) * width);
+                            int y2 = (int)(detectionMat.At<float>(i, 6) * height);
+
+                            Cv2.Rectangle(frame, new Point(x1, y1), new Point(x2, y2), Scalar.Green);
+
+                            if (y1>=height)
                             {
-                                facePersistence.Remove(face);
+                                y1 = height-1;
                             }
-                        }
+                            else if (y1<1)
+                            {
+                                y1 = 1;
+                            }
+                            if (y2 >= height)
+                            {
+                                y2 = height;
+                            }
+                            if (x2 >= width)
+                            {
+                                x2 = width;
+                            }
+                            if (x1 >= width)
+                            {
+                                x1 = width-1;
+                            }
+                            else if (x1 < 1)
+                            {
+                                x1 = 1;
+                            }
 
+                            using var faceImg = new Mat(frame, new OpenCvSharp.Range(y1, y2), new OpenCvSharp.Range(x1, x2));
 
-                    //összes feldolgozandó arc egybevonása és uj arcok hozzáadása a facePersistence listához
-                    var allFaces = facePersistence.Keys.ToList();
-
-                    for (int i = 0; i < jelenArcok.Length; i++)
-                    {
-                        allFaces.Add(jelenArcok[i]);
-                        if (!facePersistence.ContainsKey(jelenArcok[i]))
-                        {
-                            facePersistence.Add(jelenArcok[i], maxFramePersistence);                            
-                        }
-                    }
-
-                    //arcok maszkolása
-                    foreach (var item in allFaces)
-                    {
-
-                        int extraPixel = 20;
-
-                        //maszkolás határainak ellenőrzése
-                        int x = Math.Max(item.Left - extraPixel, 0);
-                        int y = Math.Max(item.Top - extraPixel, 0);
-                        int right = Math.Min(item.Right + extraPixel, frameImg.Width);
-                        int bottom = Math.Min(item.Bottom + extraPixel, frameImg.Height);
-                        int widt = right - x;
-                        int heigh = bottom - y;
-
-                        //megfelelő helyek maszkolása
-                        if (width > 0 && height > 0)
-                        {
-                            using var faceImg = new Mat(frameImg.Mat, new Rectangle(x, y, widt, heigh));
                             using var faceBlur = new Mat();
-                            CvInvoke.GaussianBlur(faceImg, faceBlur, new Size(51, 51), 30);
+                            Cv2.GaussianBlur(faceImg, faceBlur,new Size(31,31),30);
+                            frame[new OpenCvSharp.Range(y1, y2), new OpenCvSharp.Range(x1, x2)] = faceBlur;
 
-                            //maszkolt kép másolása az eredetire
-                            faceBlur.CopyTo(new Mat(frameImg.Mat, new Rectangle(x, y, widt, heigh)));
                         }
                     }
-
 
 
                     //képkocka file-ba írása
-                    vw.Write(frameImg);
+                    vw.Write(frame);
 
                     //progress nyomon követése
-                    var most = Convert.ToInt32(Math.Round((frameIndex + 1) / frameCount * 100));
+                    var most = Convert.ToInt32(Math.Round(Convert.ToDouble((frameIndex + 1) / frameCount * 100)));
                     //frameImg.Save(@$"C:\Users\peter\source\repos\Face_blur\Face_blur\Face_blur\bin\Debug\net9.0\Frames\frame_{frameIndex}.jpg");
-                    if (progress < most)
-                    {
+                    //if (progress < most)
+                    //{
                         progress = most;
                         Console.Clear();
-                        Console.WriteLine($"Progress: {progress}%");
-                    }
+                        Console.WriteLine($"Progress: {frameIndex+1}/{frameCount}");
+                    //}
 
                         frameIndex++;
                     }
