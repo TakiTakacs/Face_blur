@@ -43,7 +43,7 @@ namespace Face_blur
             var frameCount = capture.FrameCount;
 
 
-            using var vw = new VideoWriter(outputFilePath,VideoCaptureAPIs.Any, VideoWriter.FourCC('m', 'p', '4', 'v'), fps, new Size(width, height), true);
+            using var vw = new VideoWriter(outputFilePath,VideoCaptureAPIs.ANY, VideoWriter.FourCC('m', 'p', '4', 'v'), fps, new Size(width, height), true);
                 
 
                 
