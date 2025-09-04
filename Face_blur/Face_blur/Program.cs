@@ -12,9 +12,10 @@ namespace Face_blur
         static void Main(string[] args)
         {
             int progress = 0;
-            string inputFilePath = @"C:\Users\peter\Videos\test1.mp4";
+            string inputFilePath = @"C:\Users\peter\Videos\test4.mp4";
             string outputFilePath = @"C:\Users\peter\Videos\output2.mp4";
             Console.WriteLine($"Progress: {progress}%");
+            
 
             //argumentumok feldolgozása
             if (args.Length == 2)
@@ -26,9 +27,9 @@ namespace Face_blur
             //DNN model betöltése
             using var net = CvDnn.ReadNetFromCaffe("deploy.prototxt", "dnn_model.caffemodel");
 
-            
 
-            //net.SetPreferableBackend(Backend.OPENCV);
+
+           // net.SetPreferableBackend(Backend.OPENCV);
             //net.SetPreferableTarget(Target.OPENCL);
 
             //videó capture
@@ -58,24 +59,24 @@ namespace Face_blur
                 
 
             //képkockák feldolgozása                
-            while (capture.Grab())
+            while (capture.Grab() && frameIndex<1000)
                 {
 
                     capture.Retrieve(frame);
 
                     if (!frame.Empty())
                     {
-                       using var blob = CvDnn.BlobFromImage(frame,1.0,new Size(2160,3840),new Scalar(104.0,117.0,123.0),false,false);
+                       using var blob = CvDnn.BlobFromImage(frame,1.0,new Size(width*0.7,height*0.7),new Scalar(104.0,117.0,123.0),false,false);
 
                         net.SetInput(blob,"data");
 
                     using var detection = net.Forward("detection_out");
                     using var detectionMat = Mat.FromPixelData(detection.Size(2),detection.Size(3),MatType.CV_32F,detection.Ptr(0));
 
-                    for (int i = 0; i < detectionMat.Rows; i++)
+                    Parallel.For(0, detectionMat.Rows, i =>
                     {
                         float confidence = detectionMat.At<float>(i, 2);
-                        if (confidence > 0.7)
+                        if (confidence > 0.6)
                         {
                             int x1 = (int)(detectionMat.At<float>(i, 3) * width);
                             int y1 = (int)(detectionMat.At<float>(i, 4) * height);
@@ -83,13 +84,13 @@ namespace Face_blur
                             int x2 = (int)(detectionMat.At<float>(i, 5) * width);
                             int y2 = (int)(detectionMat.At<float>(i, 6) * height);
 
-                            Cv2.Rectangle(frame, new Point(x1, y1), new Point(x2, y2), Scalar.Green);
+                            Cv2.Rectangle(frame, new Point(x1, y1), new Point(x2, y2), Scalar.Red, 5);
 
-                            if (y1>=height)
+                            if (y1 >= height)
                             {
-                                y1 = height-1;
+                                y1 = height - 1;
                             }
-                            else if (y1<1)
+                            else if (y1 < 1)
                             {
                                 y1 = 1;
                             }
@@ -103,7 +104,7 @@ namespace Face_blur
                             }
                             if (x1 >= width)
                             {
-                                x1 = width-1;
+                                x1 = width - 1;
                             }
                             else if (x1 < 1)
                             {
@@ -112,12 +113,12 @@ namespace Face_blur
 
                             using var faceImg = new Mat(frame, new OpenCvSharp.Range(y1, y2), new OpenCvSharp.Range(x1, x2));
 
-                            using var faceBlur = new Mat();
-                            Cv2.GaussianBlur(faceImg, faceBlur,new Size(31,31),30);
-                            frame[new OpenCvSharp.Range(y1, y2), new OpenCvSharp.Range(x1, x2)] = faceBlur;
+
+                            Cv2.GaussianBlur(faceImg, faceImg, new Size(31, 31), 30);
+                            frame[new OpenCvSharp.Range(y1, y2), new OpenCvSharp.Range(x1, x2)] = faceImg;
 
                         }
-                    }
+                    });
 
 
                     //képkocka file-ba írása
