@@ -12,10 +12,10 @@ namespace Face_blur
         static void Main(string[] args)
         {
             int progress = 0;
-            string inputFilePath = @"C:\Users\peter\Videos\test4.mp4";
+            string inputFilePath = @"C:\Users\peter\Videos\test3.mp4";
             string outputFilePath = @"C:\Users\peter\Videos\output2.mp4";
             Console.WriteLine($"Progress: {progress}%");
-            
+
 
             //argumentumok feldolgozása
             if (args.Length == 2)
@@ -29,13 +29,20 @@ namespace Face_blur
 
 
 
-           // net.SetPreferableBackend(Backend.OPENCV);
+
+
+            //NEM MŰKÖDIK
+            //net.SetPreferableBackend(Backend.OPENCV);
             //net.SetPreferableTarget(Target.OPENCL);
 
             //videó capture
+
             using var capture = new VideoCapture(inputFilePath);
 
-            
+
+
+
+
 
             //Video exportáláshoz paraméterek
             int width = capture.FrameWidth;
@@ -44,36 +51,36 @@ namespace Face_blur
             var frameCount = capture.FrameCount;
 
 
-            using var vw = new VideoWriter(outputFilePath,VideoCaptureAPIs.ANY, VideoWriter.FourCC('m', 'p', '4', 'v'), fps, new Size(width, height), true);
-                
-
-                
-                //ideiglenes képkocka számláló progress helyett
-                int frameIndex = 0;
-                Mat frame = new Mat();
+            using var vw = new VideoWriter(outputFilePath, VideoCaptureAPIs.ANY, VideoWriter.FourCC('m', 'p', '4', 'v'), fps, new Size(width, height), true);
 
 
-                //Pontatlanság okozta flicker elkerülése miatt, korábban maszkolt területek további maszkolása adott képkoca ideig
-                //const int maxFramePersistence = 15; //Arc helyének takarása extra képkockákig
-                //Dictionary<Rectangle, int> facePersistence = new Dictionary<Rectangle, int>();
-                
+
+            //ideiglenes képkocka számláló progress helyett
+            int frameIndex = 0;
+            using Mat frame = new Mat();
+
+
+            //Pontatlanság okozta flicker elkerülése miatt, korábban maszkolt területek további maszkolása adott képkoca ideig
+            //const int maxFramePersistence = 15; //Arc helyének takarása extra képkockákig
+            Dictionary<Arc, int> facePersistence = new Dictionary<Arc, int>();
+
 
             //képkockák feldolgozása                
-            while (capture.Grab() && frameIndex<1000)
+            while (capture.Grab())
+            {
+
+                capture.Retrieve(frame);
+
+                if (!frame.Empty())
                 {
+                    using var blob = CvDnn.BlobFromImage(frame, 1.0, new Size(width, height), new Scalar(104.0, 117.0, 123.0), false, false);
 
-                    capture.Retrieve(frame);
-
-                    if (!frame.Empty())
-                    {
-                       using var blob = CvDnn.BlobFromImage(frame,1.0,new Size(width*0.7,height*0.7),new Scalar(104.0,117.0,123.0),false,false);
-
-                        net.SetInput(blob,"data");
+                    net.SetInput(blob, "data");
 
                     using var detection = net.Forward("detection_out");
-                    using var detectionMat = Mat.FromPixelData(detection.Size(2),detection.Size(3),MatType.CV_32F,detection.Ptr(0));
+                    using var detectionMat = Mat.FromPixelData(detection.Size(2), detection.Size(3), MatType.CV_32F, detection.Ptr(0));
 
-                    Parallel.For(0, detectionMat.Rows, i =>
+                    for (int i = 0; i < detectionMat.Rows; i++)
                     {
                         float confidence = detectionMat.At<float>(i, 2);
                         if (confidence > 0.6)
@@ -111,14 +118,28 @@ namespace Face_blur
                                 x1 = 1;
                             }
 
-                            using var faceImg = new Mat(frame, new OpenCvSharp.Range(y1, y2), new OpenCvSharp.Range(x1, x2));
+                            var faceImg = new Mat(frame, new OpenCvSharp.Range(y1, y2), new OpenCvSharp.Range(x1, x2));
+
+                            facePersistence.Add(new Arc(faceImg, x1, x2, y1, y2), 10);
 
 
-                            Cv2.GaussianBlur(faceImg, faceImg, new Size(31, 31), 30);
-                            frame[new OpenCvSharp.Range(y1, y2), new OpenCvSharp.Range(x1, x2)] = faceImg;
 
                         }
-                    });
+                    }
+                    foreach (var item in facePersistence)
+                    {
+                        facePersistence[item.Key]--;
+                        if (item.Value <= 0)
+                        {
+                            facePersistence.Remove(item.Key);
+                        }
+                        else
+                        {
+                            using Mat asd = new Mat();
+                            Cv2.GaussianBlur(item.Key.mat, asd, new Size(31, 31), 30);
+                            frame[new OpenCvSharp.Range(item.Key.y1, item.Key.y2), new OpenCvSharp.Range(item.Key.x1, item.Key.x2)] = asd;
+                        }
+                    }
 
 
                     //képkocka file-ba írása
@@ -127,17 +148,17 @@ namespace Face_blur
                     //progress nyomon követése
                     var most = Convert.ToInt32(Math.Round(Convert.ToDouble((frameIndex + 1) / frameCount * 100)));
                     //frameImg.Save(@$"C:\Users\peter\source\repos\Face_blur\Face_blur\Face_blur\bin\Debug\net9.0\Frames\frame_{frameIndex}.jpg");
-                    //if (progress < most)
-                    //{
+                    if (progress < most)
+                    {
                         progress = most;
                         Console.Clear();
-                        Console.WriteLine($"Progress: {frameIndex+1}/{frameCount}");
-                    //}
-
-                        frameIndex++;
+                        Console.WriteLine($"Progress: {frameIndex}/{frameCount}");
                     }
 
-                }           
-        }     
+                    frameIndex++;
+                }
+
+            }
+        }
     }
 }
