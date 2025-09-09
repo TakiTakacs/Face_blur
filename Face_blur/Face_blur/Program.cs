@@ -11,7 +11,7 @@ namespace Face_blur
 
         static void Main(string[] args)
         {
-            int progress = 0;
+            double progress = 0;
             string inputFilePath = @"C:\Users\peter\Videos\test3.mp4";
             string outputFilePath = @"C:\Users\peter\Videos\output2.mp4";
             Console.WriteLine($"Progress: {progress}%");
@@ -51,7 +51,7 @@ namespace Face_blur
             var frameCount = capture.FrameCount;
 
 
-            using var vw = new VideoWriter(outputFilePath, VideoCaptureAPIs.ANY, VideoWriter.FourCC('m', 'p', '4', 'v'), fps, new Size(width, height), true);
+            using var vw = new VideoWriter(outputFilePath, VideoCaptureAPIs.ANY, VideoWriter.FourCC('a', 'v', 'c', '1'), fps, new Size(width, height), true);
 
 
 
@@ -91,7 +91,7 @@ namespace Face_blur
                             int x2 = (int)(detectionMat.At<float>(i, 5) * width);
                             int y2 = (int)(detectionMat.At<float>(i, 6) * height);
 
-                            Cv2.Rectangle(frame, new Point(x1, y1), new Point(x2, y2), Scalar.Red, 5);
+                            //Cv2.Rectangle(frame, new Point(x1, y1), new Point(x2, y2), Scalar.Red, 5);
 
                             if (y1 >= height)
                             {
@@ -145,14 +145,14 @@ namespace Face_blur
                     //képkocka file-ba írása
                     vw.Write(frame);
 
-                    //progress nyomon követése
-                    var most = Convert.ToInt32(Math.Round(Convert.ToDouble((frameIndex + 1) / frameCount * 100)));
+                    //progress nyomon követése                   
+                    double most = Math.Round(Convert.ToDouble(frameIndex + 1) / frameCount * 100,1);
                     //frameImg.Save(@$"C:\Users\peter\source\repos\Face_blur\Face_blur\Face_blur\bin\Debug\net9.0\Frames\frame_{frameIndex}.jpg");
                     if (progress < most)
                     {
                         progress = most;
                         Console.Clear();
-                        Console.WriteLine($"Progress: {frameIndex}/{frameCount}");
+                        Console.WriteLine($"Progress: {progress}%");
                     }
 
                     frameIndex++;

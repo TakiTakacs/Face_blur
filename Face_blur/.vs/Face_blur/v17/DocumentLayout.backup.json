@@ -5,6 +5,10 @@
     {
       "AbsoluteMoniker": "D:0:0:{0768F3D0-BD5E-4DD8-B5D4-A12D9848C7FE}|Face_blur\\Face_blur.csproj|c:\\users\\peter\\source\\repos\\face_blur\\face_blur\\face_blur\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{0768F3D0-BD5E-4DD8-B5D4-A12D9848C7FE}|Face_blur\\Face_blur.csproj|solutionrelative:face_blur\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0768F3D0-BD5E-4DD8-B5D4-A12D9848C7FE}|Face_blur\\Face_blur.csproj|c:\\users\\peter\\source\\repos\\face_blur\\face_blur\\face_blur\\arc.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0768F3D0-BD5E-4DD8-B5D4-A12D9848C7FE}|Face_blur\\Face_blur.csproj|solutionrelative:face_blur\\arc.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -14,8 +18,21 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 1,
           "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Arc.cs",
+              "DocumentMoniker": "C:\\Users\\peter\\source\\repos\\Face_blur\\Face_blur\\Face_blur\\Arc.cs",
+              "RelativeDocumentMoniker": "Face_blur\\Arc.cs",
+              "ToolTip": "C:\\Users\\peter\\source\\repos\\Face_blur\\Face_blur\\Face_blur\\Arc.cs",
+              "RelativeToolTip": "Face_blur\\Arc.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABUAAAAIAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-07T20:26:21.32Z",
+              "IsPinned": true
+            },
             {
               "$type": "Document",
               "DocumentIndex": 0,
@@ -24,7 +41,7 @@
               "RelativeDocumentMoniker": "Face_blur\\Program.cs",
               "ToolTip": "C:\\Users\\peter\\source\\repos\\Face_blur\\Face_blur\\Face_blur\\Program.cs",
               "RelativeToolTip": "Face_blur\\Program.cs",
-              "ViewState": "AgIAADYAAAAAAAAAAAAQwEgAAAAtAAAAAAAAAA==",
+              "ViewState": "AgIAABUAAAAAAAAAAAAAwDUAAABmAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-08-29T21:22:50.977Z",
               "EditorCaption": ""
